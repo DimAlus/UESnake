@@ -52,7 +52,7 @@ void ASnakeBase::Move(float DeltaTime)
 	step += DeltaTime / MovementSpeed;
 	if (step > 1) {
 		step--;
-		for (int i = snakeElements.Num() - 1; i > 0; i--) {
+		for (int i = (snakeElements.Num() - 1); i > 0; i--) {
 			snakeElements[i]->Position += MovementDirToVector(snakeElements[i]->MovementDirection);
 			snakeElements[i]->MovementDirection = snakeElements[i - 1]->MovementDirection;
 		}
