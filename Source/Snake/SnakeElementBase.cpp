@@ -30,7 +30,11 @@ void ASnakeElementBase::SetWorldPosition(float path){
 	FTransform trans = GetActorTransform();
 	FVector locat = (Position + path * ParentSnake->MovementDirToVector(MovementDirection)) * ParentSnake->ElementSize;
 	locat.Z = trans.GetLocation().Z;
+	FVector deltaLoc = locat - trans.GetLocation();
+	float angle = deltaLoc.Y / sqrt(deltaLoc.X * deltaLoc.X + deltaLoc.Y * deltaLoc.Y);
 	trans.SetLocation(locat);
+	//(0, 1, 0)
+	trans.SetRotation(FQuat(FVector(0, 0, 1), acos(angle) * (deltaLoc.X > 0 ? 1 : -1)));//acos(deltaLoc.CosineAngle2D(FVector(0, 1, 0))) / PI * 180)
 	SetActorTransform(trans);
 }
 

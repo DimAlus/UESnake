@@ -5,6 +5,7 @@
 
 #include "Engine/Classes/Camera/CameraComponent.h"
 #include "SnakeBase.h"
+#include "Components/InputComponent.h"
 
 // Sets default values
 APlayerPawnBase::APlayerPawnBase()
@@ -36,10 +37,22 @@ void APlayerPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	PlayerInputComponent->BindAxis("Vertical", this, &APlayerPawnBase::HandlePlayerVerticalInput);
+	PlayerInputComponent->BindAxis("Horizontal", this, &APlayerPawnBase::HandlePlayerHorizontalInput);
 }
 
 void APlayerPawnBase::CreateSnakeActor()
 {
 	SnakeActor = GetWorld()->SpawnActor<ASnakeBase>(SnakeActorClass, FTransform());
+}
+
+void APlayerPawnBase::HandlePlayerVerticalInput(float scale){
+	if (IsValid(SnakeActor) && scale != 0)
+		SnakeActor->NextMove = scale > 0 ? EMovementDirection::UP : EMovementDirection::DOWN;
+}
+
+void APlayerPawnBase::HandlePlayerHorizontalInput(float scale){
+	if (IsValid(SnakeActor) && scale != 0)
+		SnakeActor->NextMove = scale > 0 ? EMovementDirection::RIGHT : EMovementDirection::LEFT;
 }
 
