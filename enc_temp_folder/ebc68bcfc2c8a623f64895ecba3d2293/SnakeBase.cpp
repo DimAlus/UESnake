@@ -41,9 +41,9 @@ void ASnakeBase::AddSnakeElements(int ElementsNum)
 	for (int i = 0; i < ElementsNum; i++) {
 		FTransform trans(FVector(0, snakeElements.Num() * ElementSize, 0));
 		ASnakeElementBase* el = GetWorld()->SpawnActor<ASnakeElementBase>(SnakeElementClass, trans);//FTransform(/*ElemrntsNum +*/)
-		int range = snakeElements.Add(el);
-		el->init(this, range, EMovementDirection::UP);
+		el->init(this, i, EMovementDirection::UP);
 		el->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
+		snakeElements.Add(el);
 	}
 }
 

@@ -39,9 +39,6 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float SinAmplitude;
-
-	UPROPERTY(BlueprintReadWrite)
-	UStaticMeshComponent* vertebra;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -53,8 +50,4 @@ public:
 	void SetWorldPosition(float path);
 
 	void init(ASnakeBase* parentSnake, int range, EMovementDirection movementDirection);
-
-	UFUNCTION(BlueprintNativeEvent)
-	void SetSnakeHead();
-	void SetSnakeHead_Implementation();
 };

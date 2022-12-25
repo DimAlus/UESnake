@@ -42,11 +42,6 @@ float ReAngle(float angle) {
 	}
 	return angle;
 }
-float GetAngleByVector(FVector v) {
-	float ret = acos(v.Y / sqrt(v.X * v.X + v.Y * v.Y));
-	if (v.X > 0) ret = 2 * PI - ret;
-	return ret / PI * 180 - 180;
-}
 void ASnakeElementBase::SetWorldPosition(float path){
 	// Point on left-rigth movement
 	static float onSin = 2 * PI * SinParam, amplitudeSin = SinAmplitude * ParentSnake->ElementSize;
@@ -66,15 +61,12 @@ void ASnakeElementBase::SetWorldPosition(float path){
 
 	// Calculating current rotation
 	// angle  (delta location ^ Vector(0, 1, 0))
-	float angle = GetAngleByVector(deltaLoc);
-	//float angle = acos(deltaLoc.Y / sqrt(deltaLoc.X * deltaLoc.X + deltaLoc.Y * deltaLoc.Y));
-	//// if III or IV location on round
-	//if (deltaLoc.X > 0) angle = 2 * PI - angle;
-	//angle = angle / PI * 180 - 180;
-	if (Range > 0)
-		vertebra->SetWorldRotation(FRotator(0, GetAngleByVector(ParentSnake->GetElement(Range - 1)->GetActorLocation() - locat), 0));
+	float angle = acos(deltaLoc.Y / sqrt(deltaLoc.X * deltaLoc.X + deltaLoc.Y * deltaLoc.Y));
+	// if III or IV location on round
+	if (deltaLoc.X > 0) angle = 2 * PI - angle;
+	angle = angle / PI * 180 - 180;
 	float CurrentAngle = FRotator(trans.GetRotation()).Yaw;
-	angle = CurrentAngle + clamp(ReAngle(angle - CurrentAngle), -3, 3);
+	angle = CurrentAngle + clamp(ReAngle(angle - CurrentAngle), -10, 10);
 	//return 2.f * FMath::Acos(W);
 	// 
 	//float otherAngle = trans.GetRotation().GetAngle() * 2;// / 180 * PI;//.GetTwistAngle(FVector(0, 0, 1));
@@ -97,18 +89,8 @@ void ASnakeElementBase::init(ASnakeBase* parentSnake, int range, EMovementDirect
 	ParentSnake = parentSnake;
 	if (range)
 		Position = ParentSnake->GetElement(range - 1)->Position - ParentSnake->MovementDirToVector(movementDirection);
-	else {
+	else
 		Position = FVector();
-		SetSnakeHead();
-	}
 	SetWorldPosition(0);
-
-}
-//
-//void ASnakeElementBase::SetSnakeHead(){
-//
-//}
-
-void ASnakeElementBase::SetSnakeHead_Implementation(){
 }
 
