@@ -12,8 +12,8 @@ class ASnakeElementBase;
 UENUM()
 enum class EMovementDirection {
 	UP,
-	LEFT,
 	DOWN,
+	LEFT,
 	RIGHT
 };
 
@@ -63,6 +63,4 @@ public:
 	ASnakeElementBase* GetElement(int Range);
 
 	FVector MovementDirToVector(EMovementDirection dir);
-
-	void SetMovementDirectory(EMovementDirection dir);
 };

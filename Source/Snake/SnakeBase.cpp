@@ -25,8 +25,30 @@ void ASnakeBase::BeginPlay()
 
 FVector ASnakeBase::MovementDirToVector(EMovementDirection dir)
 {
-	static FVector vecs[4]{ FVector(0, -1, 0), FVector(0, 1, 0), FVector(-1, 0, 0), FVector(1, 0, 0) };
+	static FVector vecs[4]{ FVector(0, -1, 0), FVector(-1, 0, 0), FVector(0, 1, 0), FVector(1, 0, 0) };
 	return vecs[static_cast<int>(dir)];
+}
+EMovementDirection Radianals(EMovementDirection d) {
+	switch (d)
+	{
+	case EMovementDirection::UP:
+		return EMovementDirection::DOWN;
+	case EMovementDirection::LEFT:
+		return EMovementDirection::RIGHT;
+	case EMovementDirection::DOWN:
+		return EMovementDirection::UP;
+	case EMovementDirection::RIGHT:
+		return EMovementDirection::LEFT;
+	}
+	return EMovementDirection::UP;
+}
+
+void ASnakeBase::SetMovementDirectory(EMovementDirection dir){
+	if (snakeElements.Num() > 0) {
+		if (GetElement(0)->MovementDirection != Radianals(dir))
+			NextMove = dir;
+	}
+	else NextMove = dir;
 }
 
 // Called every frame
@@ -42,7 +64,7 @@ void ASnakeBase::AddSnakeElements(int ElementsNum)
 		FTransform trans(FVector(0, snakeElements.Num() * ElementSize, 0));
 		ASnakeElementBase* el = GetWorld()->SpawnActor<ASnakeElementBase>(SnakeElementClass, trans);//FTransform(/*ElemrntsNum +*/)
 		int range = snakeElements.Add(el);
-		el->init(this, range, EMovementDirection::UP);
+		el->init(this, range, range ? GetElement(range - 1)->MovementDirection : NextMove);
 		el->AttachToActor(this, FAttachmentTransformRules::KeepRelativeTransform);
 	}
 }

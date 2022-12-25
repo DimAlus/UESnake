@@ -48,11 +48,11 @@ void APlayerPawnBase::CreateSnakeActor()
 
 void APlayerPawnBase::HandlePlayerVerticalInput(float scale){
 	if (IsValid(SnakeActor) && scale != 0)
-		SnakeActor->SetMovementDirectory(scale > 0 ? EMovementDirection::UP : EMovementDirection::DOWN);
+		SnakeActor->NextMove = scale > 0 ? EMovementDirection::UP : EMovementDirection::DOWN;
 }
 
 void APlayerPawnBase::HandlePlayerHorizontalInput(float scale){
 	if (IsValid(SnakeActor) && scale != 0)
-		SnakeActor->SetMovementDirectory(scale > 0 ? EMovementDirection::RIGHT : EMovementDirection::LEFT);
+		SnakeActor->NextMove = scale > 0 ? EMovementDirection::RIGHT : EMovementDirection::LEFT;
 }
 
