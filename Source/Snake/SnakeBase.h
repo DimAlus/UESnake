@@ -17,6 +17,12 @@ enum class EMovementDirection {
 	RIGHT
 };
 
+UENUM()
+enum class EBonuses {
+	DEATH,
+	ADD,
+	POP
+};
 
 
 UCLASS()
@@ -40,9 +46,9 @@ public:
 	UPROPERTY()
 	EMovementDirection NextMove;
 
-
 	UPROPERTY(BlueprintReadOnly)
 	float AllPath;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -51,12 +57,17 @@ protected:
 	UPROPERTY()
 	TArray<ASnakeElementBase*> snakeElements;
 
+	TArray<FVector> WaitingElements;
+
+	FVector* teleport;
 	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	void AddSnakeElements(int ElemrntsNum = 1);
+	void AddSnakeElementWait(int ElemrntsNum = 1);
+	void CheckAddElementWait();
 
 	void Move(float DeltaTime);
 
@@ -65,4 +76,14 @@ public:
 	FVector MovementDirToVector(EMovementDirection dir);
 
 	void SetMovementDirectory(EMovementDirection dir);
+
+	UFUNCTION()
+	void SnakeElementOverlap(ASnakeElementBase* Element, AActor* Other);
+
+	UFUNCTION()
+	void AddBonus(EBonuses Bonus, AActor* Other);
+
+	UFUNCTION()
+	void Teleport(FVector vector);
+
 };

@@ -11,6 +11,10 @@ ASnakeElementBase::ASnakeElementBase()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+	MeshComponent->SetCollisionEnabled(ECollisionEnabled::Type::QueryOnly);
+	MeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	MeshComponent->SetCollisionObjectType(ECollisionChannel::ECC_Pawn);
+	MeshComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
 	SinParam = 0.3f;	
 	SinAmplitude = 0.1f;
 }
@@ -19,6 +23,7 @@ ASnakeElementBase::ASnakeElementBase()
 void ASnakeElementBase::BeginPlay()
 {
 	Super::BeginPlay();
+	MeshComponent->OnComponentBeginOverlap.AddDynamic(this, &ASnakeElementBase::HandleBeginOverlap);
 }
 
 // Called every frame
@@ -47,7 +52,7 @@ float GetAngleByVector(FVector v) {
 	if (v.X > 0) ret = 2 * PI - ret;
 	return ret / PI * 180 - 180;
 }
-void ASnakeElementBase::SetWorldPosition(float path){
+void ASnakeElementBase::SetWorldPosition(float path, float deltaTime){
 	// Point on left-rigth movement
 	static float onSin = 2 * PI * SinParam, amplitudeSin = SinAmplitude * ParentSnake->ElementSize;
 	float SinMoment = sin(onSin * (ParentSnake->AllPath - Range)) * amplitudeSin;
@@ -74,7 +79,7 @@ void ASnakeElementBase::SetWorldPosition(float path){
 	if (Range > 0)
 		vertebra->SetWorldRotation(FRotator(0, GetAngleByVector(ParentSnake->GetElement(Range - 1)->GetActorLocation() - locat), 0));
 	float CurrentAngle = FRotator(trans.GetRotation()).Yaw;
-	angle = CurrentAngle + clamp(ReAngle(angle - CurrentAngle), -3, 3);
+	angle = CurrentAngle + clamp(ReAngle(angle - CurrentAngle), -RotatePerSecond * deltaTime, RotatePerSecond * deltaTime);
 	//return 2.f * FMath::Acos(W);
 	// 
 	//float otherAngle = trans.GetRotation().GetAngle() * 2;// / 180 * PI;//.GetTwistAngle(FVector(0, 0, 1));
@@ -90,8 +95,29 @@ void ASnakeElementBase::SetWorldPosition(float path){
 	//trans.SetRotation(FQuat(FVector(0, 0, 1), otherAngle));
 	SetActorTransform(trans);
 }
-
+void ASnakeElementBase::SetWorldRotation(EMovementDirection dir) {
+	int rot = 0;
+	switch (dir)
+	{
+	case EMovementDirection::UP:
+		rot = 0;
+		break;
+	case EMovementDirection::LEFT:
+		rot = -90;
+		break;
+	case EMovementDirection::DOWN:
+		rot = 180;
+		break;
+	case EMovementDirection::RIGHT:
+		rot = 90;
+		break;
+	}
+	SetActorRotation(FQuat(FRotator(0, rot, 0)));
+}
 void ASnakeElementBase::init(ASnakeBase* parentSnake, int range, EMovementDirection movementDirection){
+	if (!IsValid(parentSnake)) {
+		std::_Xruntime_error("Snake is not valid!");
+	}
 	MovementDirection = movementDirection;
 	Range = range;
 	ParentSnake = parentSnake;
@@ -101,14 +127,20 @@ void ASnakeElementBase::init(ASnakeBase* parentSnake, int range, EMovementDirect
 		Position = FVector();
 		SetSnakeHead();
 	}
-	SetWorldPosition(0);
-
+	SetWorldPosition(0, 0);
+	SetWorldRotation(movementDirection);
 }
-//
-//void ASnakeElementBase::SetSnakeHead(){
-//
-//}
 
 void ASnakeElementBase::SetSnakeHead_Implementation(){
+}
+
+void ASnakeElementBase::Interact(AActor* Interactor){
+}
+
+void ASnakeElementBase::HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other, 
+										   UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, 
+										   bool bFromSweep, const FHitResult& SweepResult){
+	if (IsValid(ParentSnake))
+		ParentSnake->SnakeElementOverlap(this, Other);
 }
 

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interactable.h"
 #include "SnakeElementBase.generated.h"
 
 class UStaticMeshComponent;
@@ -11,7 +12,7 @@ enum class EMovementDirection;
 class ASnakeBase;
 
 UCLASS()
-class SNAKE_API ASnakeElementBase : public AActor
+class SNAKE_API ASnakeElementBase : public AActor, public IInteractable
 {
 	GENERATED_BODY()
 	
@@ -40,6 +41,9 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float SinAmplitude;
 
+	UPROPERTY(EditDefaultsOnly)
+	float RotatePerSecond;
+
 	UPROPERTY(BlueprintReadWrite)
 	UStaticMeshComponent* vertebra;
 protected:
@@ -50,11 +54,20 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void SetWorldPosition(float path);
+	void SetWorldPosition(float path, float deltaTime);
+
+	void SetWorldRotation(EMovementDirection dir);
 
 	void init(ASnakeBase* parentSnake, int range, EMovementDirection movementDirection);
 
 	UFUNCTION(BlueprintNativeEvent)
 	void SetSnakeHead();
 	void SetSnakeHead_Implementation();
+
+	virtual void Interact(AActor* Interactor);
+
+	UFUNCTION()
+	void HandleBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Other,
+								UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex,
+								bool bFromSweep, const FHitResult& SweepResult);
 };
