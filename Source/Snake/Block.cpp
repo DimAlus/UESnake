@@ -27,7 +27,7 @@ void ABlock::Tick(float DeltaTime)
 }
 
 void ABlock::Interact(AActor* Interactor) {
-	/*ASnakeBase* snake = Cast<ASnakeBase>(Interactor);
+	ASnakeBase* snake = Cast<ASnakeBase>(Interactor);
 	if (IsValid(snake))
-		snake->AddBonus(EBonuses::DEATH, this);*/
+		snake->AddBonus(EBonuses::DEATH, this);
 }

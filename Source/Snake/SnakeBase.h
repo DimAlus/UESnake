@@ -84,6 +84,6 @@ public:
 	void AddBonus(EBonuses Bonus, AActor* Other);
 
 	UFUNCTION()
-	void Teleport(FVector vector);
+	void Teleport();
 
 };

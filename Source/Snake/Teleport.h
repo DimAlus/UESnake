@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interactable.h"
+#include <vector>
 
 #include "Teleport.generated.h"
 
@@ -20,11 +21,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	int IndexTeleport;
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	static TArray<ATeleport*> teleports;
 
 	float timerDisable = -1.f;
 
@@ -32,7 +33,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	virtual void Interact(AActor* Interactor) override;
-
+	
 	UFUNCTION()
 	void Enable();
 

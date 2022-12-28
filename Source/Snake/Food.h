@@ -27,9 +27,18 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	float disableTicks;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Interact(AActor* Unteractor) override;
+
+	void Respawn(ASnakeBase* Snake);
+
+	UFUNCTION()
+	virtual void Enabling();
+	UFUNCTION()
+	virtual void Disabling();
 };

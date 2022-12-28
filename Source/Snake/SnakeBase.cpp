@@ -4,7 +4,6 @@
 #include "SnakeBase.h"
 #include "SnakeElementBase.h"
 #include "Interactable.h"
-
 // Sets default values
 ASnakeBase::ASnakeBase()
 {
@@ -23,6 +22,7 @@ void ASnakeBase::BeginPlay()
 	Super::BeginPlay();
 	
 	AddSnakeElements(4);
+
 	
 }
 
@@ -76,7 +76,7 @@ void ASnakeBase::AddBonus(EBonuses Bonus, AActor* Other){
 		CheckAddElementWait();
 		snakeElements.Last()->Destroy();
 		snakeElements.RemoveAt(snakeElements.Num() - 1);
-		if (snakeElements.Num() < 1)
+		if (snakeElements.Num() < 2)
 			AddBonus(EBonuses::DEATH, Other);
 		break;
 	default:
@@ -121,7 +121,7 @@ void ASnakeBase::Move(float DeltaTime)
 {
 	static float step = 0;
 	step += DeltaTime / MovementSpeed;
-	AllPath += DeltaTime / MovementSpeed;
+	AllPath += DeltaTime / MovementSpeed;	
 	if (step > 1) {
 		if (teleport) {
 			snakeElements[0]->Position = *teleport;
@@ -149,7 +149,7 @@ ASnakeElementBase* ASnakeBase::GetElement(int Range) {
 	return snakeElements[Range];
 }
 
-void ASnakeBase::Teleport(FVector vector) {
-	teleport = new FVector(vector);
+void ASnakeBase::Teleport() {
+	teleport = new FVector();
 }
 

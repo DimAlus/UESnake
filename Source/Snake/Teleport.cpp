@@ -17,7 +17,7 @@ ATeleport::ATeleport()
 void ATeleport::BeginPlay()
 {
 	Super::BeginPlay();
-	teleports.Add(this);
+	//teleports.push_back(this);
 }
 
 // Called every frame
@@ -33,15 +33,15 @@ void ATeleport::Tick(float DeltaTime)
 
 void ATeleport::Interact(AActor* Interactor){
 	ASnakeBase* snake = Cast<ASnakeBase>(Interactor);
-	if (IsValid(snake)) 
-		for (int i = 0; i < teleports.Num(); i++)
-			if (teleports[i] != this && teleports[i]->IndexTeleport == IndexTeleport) {
-				FVector loc = teleports[i]->GetActorLocation() / snake->ElementSize;
-				snake->Teleport(FVector(round(loc.X), round(loc.Y), round(loc.Z)));
-				Disable();
-				teleports[i]->Disable();
-				break;
-			}
+	if (IsValid(snake)) snake->Teleport();
+		// for (int i = 0; i < teleports.Num(); i++)
+		// 	if (teleports[i] != this && teleports[i]->IndexTeleport == IndexTeleport) {
+		// 		FVector loc = teleports[i]->GetActorLocation() / snake->ElementSize;
+		// 		snake->Teleport(FVector(round(loc.X), round(loc.Y), round(loc.Z)));
+		// 		Disable();
+		// 		teleports[i]->Disable();
+		// 		break;
+		// 	}
 	
 }
 
